@@ -1,0 +1,2 @@
+This is quite similar to the Fibonacci series, except that one of the terms is squared. 
+So, one runs into extremely 'long' integers which are easiest to handle in languages like Ruby and Python. In Java, one may require Big Integer data structures to deal with the size of the answers here; in C++, one may require to use a similar compound data structure such as a list of integers to handle the large integer results.

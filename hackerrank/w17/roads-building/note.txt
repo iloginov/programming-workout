@@ -1,0 +1,3 @@
+We want to make the new shortest distance smaller than the current one. So if the current shortest distance is S, we have S−min{D1(X)+DN(Y),D1(Y)+DN(X)}−1 new variants of roads for this pair of cities. This gives us quadratic solution. 
+
+We can get faster solution after we note that we can omit minimum function and write the answer as the sum of max{S−1−D1(X)−DN(Y),0} over all the pairs of (X,Y) such that X and Y are nodes. For calculating this sum, we can just iterate though the nodes X in this sum and use sliding window and prefix sums to calculate the whole sum.
