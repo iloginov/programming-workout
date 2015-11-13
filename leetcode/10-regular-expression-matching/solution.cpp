@@ -24,27 +24,27 @@ public:
     //
     //  Assume that s is not empty.
     //
-    std::vector<string> matchPrefix(string s, string p) {
-        std::vector<string> res;
+    std::vector<size_t> matchPrefix(string s, string p) {
+        std::vector<size_t> res;
 
         if (p.length() == 1) {  // x
             if (p == ".") {
-                res.push_back(s.substr(0, 1));
+                res.push_back(1);
             } else if (p[0] == s[0]) {
-                res.push_back(s.substr(0, 1));
+                res.push_back(1);
             }
         }
 
         if (p.length() == 2) {  // x*
-            res.push_back("");
+            res.push_back(0);
             if (p[0] == '.') {
                 for (auto i = 1; i <= s.length(); ++i) {
-                    res.push_back(s.substr(0, i));
+                    res.push_back(i);
                 }
             } else {
                 auto i = 0;
                 while (i < s.length() && s[i] == p[0]) {
-                    res.push_back(s.substr(0, ++i));
+                    res.push_back(++i);
                 }
             }
         }
@@ -52,8 +52,24 @@ public:
         return res;
     }
 
+private:
+    bool isMatchC(const char *s, const char *p) {
+      if (*p == '\0') return *s == '\0';
+     
+      // next char is not '*': must match current character
+      if (*(p+1) != '*') {
+        return ((*p == *s) || (*p == '.' && *s != '\0')) && isMatch(s+1, p+1);
+      }
+      // next char is '*'
+      while ((*p == *s) || (*p == '.' && *s != '\0')) {
+        if (isMatch(s, p+2)) return true;
+        s++;
+      }
+      return isMatch(s, p+2);
+    }
+
 public:
-    bool isMatch(string s, string p) {
+    bool isMatch1(string s, string p) {
         if (p.length() == 0) {
             if (s.length() == 0) {
                 return true;
@@ -62,13 +78,17 @@ public:
             }
         }
 
+        if (s.length() == 0) {
+            return false;
+        }
+
         auto p1 = getPart(p);                                       // First part of regexp.
         auto p2 = p.substr(p1.length(), p.length() - p1.length());  // Rest.
 
         auto matches = matchPrefix(s, p1);
 
         for (auto m : matches) {
-            auto s2 = s.substr(m.length(), s.length() - m.length());
+            auto s2 = (m == 0 ? s : s.substr(m, s.length() - m));
             if (isMatch(s2, p2)) {
                 return true;
             }
@@ -76,29 +96,33 @@ public:
 
         return false;
     }
+
+    bool isMatch(string s, string p) {
+        return isMatchC(s.c_str(), p.c_str());
+    }
 };
 
 TEST(LongestSubstring, matchPrefix1) {
     Solution sol;
-    std::vector<string> res = { "a" };
+    std::vector<size_t> res = { 1 };
     ASSERT_THAT(sol.matchPrefix("aa", "a"), testing::Eq(res));
 }
 
 TEST(LongestSubstring, matchPrefix2) {
     Solution sol;
-    std::vector<string> res = { };
+    std::vector<size_t> res = { };
     ASSERT_THAT(sol.matchPrefix("aa", "b"), testing::Eq(res));
 }
 
 TEST(LongestSubstring, matchPrefix3) {
     Solution sol;
-    std::vector<string> res = { "", "a", "aa" };
+    std::vector<size_t> res = { 0, 1, 2 };
     ASSERT_THAT(sol.matchPrefix("aa", "a*"), testing::Eq(res));
 }
 
 TEST(LongestSubstring, matchPrefix4) {
     Solution sol;
-    std::vector<string> res = { "", "a", "ab" };
+    std::vector<size_t> res = { 0, 1, 2 };
     ASSERT_THAT(sol.matchPrefix("ab", ".*"), testing::Eq(res));
 }
 
@@ -200,6 +224,16 @@ TEST(LongestSubstring, isMatch12) {
 TEST(LongestSubstring, isMatch13) {
     Solution sol;
     ASSERT_THAT(sol.isMatch("aab", "a.*b"), testing::Eq(true));
+}
+
+TEST(LongestSubstring, isMatchTLE1) {
+    Solution sol;
+    ASSERT_THAT(sol.isMatch("aaaaaaaaaaaaab", "a*a*a*a*a*a*a*a*a*a*c"), testing::Eq(false));
+}
+
+TEST(LongestSubstring, isMatchRE1) {
+    Solution sol;
+    ASSERT_THAT(sol.isMatch("a", ".*..a*"), testing::Eq(false));
 }
 
 int main(int argc, char** argv) {
