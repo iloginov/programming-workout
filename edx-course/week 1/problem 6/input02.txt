@@ -1,0 +1,34 @@
+10 9
+1234567890
+!@#$%^&*()
+qwertyuiop
+QWERTYUIOP
+asdfghjkl;
+ASDFGHJKL:
+zxcvbnm,./
+ZXCVBNM<>?
+[]{}='"-|+
+Pascal
+%TEMPLATE-START%
+begin
+  reset(input, 'filename.in');
+  rewrite(output, 'filename.out');
+end.
+%TEMPLATE-END%
+C
+%TEMPLATE-START%
+int main()
+{
+    freopen("filename.in", "r", stdin);
+    freopen("filename.out", "w", stdout);
+}
+%TEMPLATE-END%
+Java
+%TEMPLATE-START%
+public class Main {
+    public static void main(String[] args) {
+        try (IO.Scanner in = IO.newScanner();
+             IO.Printer out = IO.newPrinter()) {
+    }
+}
+%TEMPLATE-END%
